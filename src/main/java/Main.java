@@ -129,7 +129,7 @@ public class Main {
                 directory.mkdirs();
 
                 //Generate QR Code
-                generateQRCodeImage("https://docs.google.com/forms/d/e/1FAIpQLSdr3Q3_LdFC6hjYHoo1diASiaQ2MWyypD7_kvHYpO5YPcxg4Q/viewform?usp=pp_url" +
+                generateQRCodeImage("[google form url here]" +
                                 "&entry.2005620554=" + name +
                                 "&entry.1045781291=" + groupNumber +
                                 "&entry.141207624=" + gender +
