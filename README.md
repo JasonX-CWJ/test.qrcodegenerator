@@ -7,5 +7,7 @@ The coding is a bit sloppy due to how long ago this was. So feel free to modify 
 You need to use Gradle for this.
 
 Libraries used:
+
 zxing
+
 Apache POI
