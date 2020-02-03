@@ -22,9 +22,9 @@ public class Main {
 
     private final static int QR_WIDTH = 500;
     private final static int QR_HEIGHT = 500;
-    private final static String FOLDERNAME = "QR Output";
+    private final static String FOLDERNAME = "QR Codes";
 
-    private static void generateQRCodeImage(String text, String path, String name, String matricNo, int groupNumber)
+    private static void generateQRCodeImage(String text, String path, String name, String matricNo, int groupNo)
             throws WriterException, IOException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, QR_WIDTH, QR_HEIGHT);
@@ -38,7 +38,7 @@ public class Main {
         FontMetrics fm = g.getFontMetrics();
         wrapString(name, tempStringList, fm);
         tempStringList.add(matricNo);
-        tempStringList.add("Group " + groupNumber);
+        tempStringList.add("Group " + groupNo);
 
 //        Calculate space needed for the text
         int totalHeight = fm.getHeight() * tempStringList.size() + 10;
@@ -100,15 +100,19 @@ public class Main {
             Workbook workbook = new XSSFWorkbook(new FileInputStream(new File("Test(New).xlsx")));
             Sheet datatypeSheet = workbook.getSheetAt(0);
             Iterator<Row> iterator = datatypeSheet.iterator();
+            iterator.next();
 
             String name;
-            int groupNumber;
+            int currentNo;
+            int groupNo;
             String matricNo;
             String gender;
-            String ICPass;
+            String passNo;
             String email;
-            String homeUniversity;
+            String homeUni;
             String country;
+            String offerLetterURL;
+            String eValURL;
             DataFormatter formatter = new DataFormatter();
 
             while (iterator.hasNext()) {
@@ -116,29 +120,47 @@ public class Main {
                 Iterator<Cell> cellIterator = currentRow.iterator();
 
                 //The number of fields should be equal to the number of column.
+                currentNo = (int) cellIterator.next().getNumericCellValue();
+                if(currentNo == 0){
+                    break;
+                }
                 name = cellIterator.next().getStringCellValue();
-                groupNumber = (int) cellIterator.next().getNumericCellValue();
+//                if(name.contains("(")){
+//                    name = name.substring(0, name.indexOf("("));
+//                }
+                passNo = formatter.formatCellValue(cellIterator.next());
                 matricNo = cellIterator.next().getStringCellValue();
-                ICPass = formatter.formatCellValue(cellIterator.next());
-                gender = cellIterator.next().getStringCellValue();
                 email = cellIterator.next().getStringCellValue();
-                homeUniversity = cellIterator.next().getStringCellValue();
+                gender = cellIterator.next().getStringCellValue();
+                homeUni = cellIterator.next().getStringCellValue();
+                cellIterator.next();
                 country = cellIterator.next().getStringCellValue();
-
-                File directory = new File("./" + FOLDERNAME + "/G" + groupNumber);
+                cellIterator.next();
+                cellIterator.next();
+                cellIterator.next();
+                cellIterator.next();
+                cellIterator.next();
+                groupNo = (int) cellIterator.next().getNumericCellValue();
+                eValURL = cellIterator.next().getStringCellValue();
+                offerLetterURL = cellIterator.next().getStringCellValue();
+                if(offerLetterURL.isEmpty()) continue;
+                File directory = new File("./" + FOLDERNAME + "/G" + groupNo);
                 directory.mkdirs();
 
                 //Generate QR Code
-                generateQRCodeImage("[google form url here]" +
+
+                generateQRCodeImage("https://docs.google.com/forms/d/e/1FAIpQLSdKK1qB4mzcusWtqF_7PTR6anqIPHsyosvM7fqrKN5UqpUohg/viewform?usp=pp_url" +
                                 "&entry.2005620554=" + name +
-                                "&entry.1045781291=" + groupNumber +
-                                "&entry.141207624=" + gender +
-                                "&entry.1446259150=" + ICPass +
-                                "&entry.688448863=" + matricNo +
+                                "&entry.362091865=" + gender +
+                                "&entry.1045781291=" + passNo +
+                                "&entry.2120824388=" + matricNo +
+                                "&entry.79707660=" + email +
+                                "&entry.1065046570=" + groupNo +
                                 "&entry.1166974658=" + country +
-                                "&entry.1065046570=" + homeUniversity +
-                                "&entry.444699550=" + email,
-                        "./" + FOLDERNAME + "/G" + groupNumber + "/" + name + ".png", name, matricNo, groupNumber);
+                                "&entry.839337160=" + homeUni +
+                                "&entry.640261810=" + offerLetterURL +
+                                "&entry.112646219=" + eValURL,
+                        "./" + FOLDERNAME + "/G" + groupNo + "/" + name + ".png", name, matricNo, groupNo);
             }
         } catch (WriterException e) {
             System.out.println("Could not generate QR Code, WriterException :: " + e.getMessage());
